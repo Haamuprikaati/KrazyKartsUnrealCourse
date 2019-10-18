@@ -44,6 +44,10 @@ private:
 	UPROPERTY()
 	float DragCoefficient = 16;
 
+	//Higher means more drag
+	UPROPERTY()
+	float RollingResistanceCoefficient = 0.1;
+
 	FVector Velocity;
 
 	float Throttle;
@@ -54,7 +58,8 @@ private:
 
 	void MoveRight(float Value);
 
-	FVector GetResistance();
+	FVector GetAirResistance();
+	FVector GetRollingResistance();
 
 	void ApplyRotation(float DeltaTime);
 
