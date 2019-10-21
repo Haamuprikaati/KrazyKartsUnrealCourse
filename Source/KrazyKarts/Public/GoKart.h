@@ -64,6 +64,10 @@ private:
 
 	void SimulateMove(FGoKartMove Move);
 
+	FGoKartMove CreateMove(float DeltaTime);
+
+	void ClearAcknowledgedMoves(FGoKartMove LastMove);
+
 	//Mass of the car in kg
 	UPROPERTY(EditAnywhere)
 	float Mass = 1000;
@@ -109,5 +113,7 @@ private:
 	void ApplyRotation(float DeltaTime, float SteeringThrow);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
+
+	TArray<FGoKartMove> UnacknowledgedMoves;
 
 };
