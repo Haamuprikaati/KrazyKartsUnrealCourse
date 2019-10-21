@@ -58,19 +58,25 @@ void AGoKart::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsLocallyControlled())
+	if (Role == ROLE_AutonomousProxy)
 	{
 		FGoKartMove Move = CreateMove(DeltaTime);
-
-		if (!HasAuthority())
-		{
-			UnacknowledgedMoves.Add(Move);
-			UE_LOG(LogTemp, Warning, TEXT("Ques length is: %d"), UnacknowledgedMoves.Num())
-		}
-
-		Server_SendMove(Move);
-
 		SimulateMove(Move);
+
+		UnacknowledgedMoves.Add(Move);
+		Server_SendMove(Move);
+	}
+
+	//We are the server and in control of the pawn
+	if (Role == ROLE_Authority && GetRemoteRole() == ROLE_SimulatedProxy)
+	{
+		FGoKartMove Move = CreateMove(DeltaTime);
+		Server_SendMove(Move);
+	}
+
+	if (Role == ROLE_SimulatedProxy)
+	{
+		SimulateMove(ServerState.LastMove);
 	}
 
 	DrawDebugString(GetWorld(), FVector(0, 0, 100), GetEnumText(Role), this, FColor::White, DeltaTime);
@@ -187,6 +193,7 @@ void AGoKart::MoveRight(float Value)
 void AGoKart::Server_SendMove_Implementation(FGoKartMove Move)
 {
 	SimulateMove(Move);
+
 	ServerState.LastMove = Move;
 	ServerState.Transform = GetActorTransform();
 	ServerState.Velocity = Velocity;
