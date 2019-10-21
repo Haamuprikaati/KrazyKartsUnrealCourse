@@ -2,6 +2,7 @@
 
 #include "GameFramework/GameStateBase.h"
 #include "GoKartMovementComponent.h"
+#include "GameFramework/Actor.h"
 #include "Engine/World.h"
 
 

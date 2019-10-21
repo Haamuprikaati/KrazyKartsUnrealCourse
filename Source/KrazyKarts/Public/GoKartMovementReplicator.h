@@ -12,14 +12,14 @@ struct FGoKartState
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY()
-	FTransform Tranform;
+		UPROPERTY()
+		FTransform Tranform;
 
 	UPROPERTY()
-	FVector Velocity;
+		FVector Velocity;
 
 	UPROPERTY()
-	FGoKartMove LastMove;
+		FGoKartMove LastMove;
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -44,17 +44,25 @@ private:
 
 	void UpdateServerState(const FGoKartMove& Move);
 
+	void ClientTick(float DeltaTime);
+
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_SendMove(FGoKartMove Move);
+		void Server_SendMove(FGoKartMove Move);
 
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
-	FGoKartState ServerState;
+		FGoKartState ServerState;
 
 	UFUNCTION()
-	void OnRep_ServerState();
+		void OnRep_ServerState();
+	void AutonomousProxy_OnRep_ServerState();
+	void SimulatedProxy_OnRep_ServerState();
 
 	TArray<FGoKartMove> UnacknowledgedMoves;
 
+	float ClientTimeSinceUpdate;
+	float ClientTimeBetweenLastUpdates;
+	FVector ClientStartLocation;
+
 	UPROPERTY()
-	UGoKartMovementComponent* MovementComponent;
+		UGoKartMovementComponent* MovementComponent;
 };
