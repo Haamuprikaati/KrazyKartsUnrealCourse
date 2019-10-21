@@ -35,13 +35,13 @@ public:
 
 	void SimulateMove(const FGoKartMove& Move);
 
-	FGoKartMove CreateMove(float DeltaTime);
-
 	FVector GetVelocity() { return Velocity; };
 	void SetVelocity(FVector Val) { Velocity = Val; };
 
 	void SetThrottle(float Val) { Throttle = Val; };
 	void SetSteeringThrow(float Val) { SteeringThrow = Val; };
+
+	FGoKartMove GetLastMove() { return LastMove; };
 
 protected:
 	// Called when the game starts
@@ -52,6 +52,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
+
+	FGoKartMove CreateMove(float DeltaTime);
 
 	void ApplyRotation(float DeltaTime, float SteeringThrow);
 
@@ -85,5 +87,7 @@ private:
 	float Throttle;
 
 	float SteeringThrow;
+
+	FGoKartMove LastMove;
 		
 };

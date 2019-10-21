@@ -43,6 +43,8 @@ private:
 
 	void ClearAcknowledgedMoves(FGoKartMove LastMove);
 
+	void UpdateServerState(const FGoKartMove& Move);
+
 	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
 	FGoKartState ServerState;
 
