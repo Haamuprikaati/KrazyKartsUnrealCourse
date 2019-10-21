@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "GoKartMovementComponent.generated.h"
 
+
 USTRUCT()
 struct FGoKartMove
 {
@@ -13,25 +14,31 @@ struct FGoKartMove
 
 	UPROPERTY()
 	float Throttle;
-
 	UPROPERTY()
 	float SteeringThrow;
 
 	UPROPERTY()
 	float DeltaTime;
-
 	UPROPERTY()
 	float Time;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class KRAZYKARTS_API UGoKartMovementComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UGoKartMovementComponent();
+
+protected:
+	// Called when the game starts
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void SimulateMove(const FGoKartMove& Move);
 
@@ -43,51 +50,40 @@ public:
 
 	FGoKartMove GetLastMove() { return LastMove; };
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
 private:
-
 	FGoKartMove CreateMove(float DeltaTime);
+
+	FVector GetAirResistance();
+	FVector GetRollingResistance();
 
 	void ApplyRotation(float DeltaTime, float SteeringThrow);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 
-	FVector GetAirResistance();
-	FVector GetRollingResistance();
-
-	//Mass of the car in kg
+	// The mass of the car (kg).
 	UPROPERTY(EditAnywhere)
 	float Mass = 1000;
 
-	//The throttle applied to the car when the throttle is fully down in newtons
+	// The force applied to the car when the throttle is fully down (N).
 	UPROPERTY(EditAnywhere)
 	float MaxDrivingForce = 10000;
 
-	//Minimum radius of the car turning circle at full lock (m)
+	// Minimum radius of the car turning circle at full lock (m).
 	UPROPERTY(EditAnywhere)
 	float MinTurningRadius = 10;
 
-	//Higher means more drag
-	UPROPERTY()
+	// Higher means more drag.
+	UPROPERTY(EditAnywhere)
 	float DragCoefficient = 16;
 
-	//Higher means more drag
-	UPROPERTY()
-	float RollingResistanceCoefficient = 0.1;
+	// Higher means more rolling resistance.
+	UPROPERTY(EditAnywhere)
+	float RollingResistanceCoefficient = 0.015;
 
 	FVector Velocity;
 
 	float Throttle;
-
 	float SteeringThrow;
 
 	FGoKartMove LastMove;
-		
 };

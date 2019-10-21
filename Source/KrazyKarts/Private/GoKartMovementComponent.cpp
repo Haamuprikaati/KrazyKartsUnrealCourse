@@ -2,6 +2,8 @@
 
 #include "GameFramework/GameStateBase.h"
 #include "GoKartMovementComponent.h"
+#include "Engine/World.h"
+
 
 // Sets default values for this component's properties
 UGoKartMovementComponent::UGoKartMovementComponent()
@@ -20,7 +22,7 @@ void UGoKartMovementComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
+
 }
 
 
@@ -58,7 +60,8 @@ FGoKartMove UGoKartMovementComponent::CreateMove(float DeltaTime)
 	Move.DeltaTime = DeltaTime;
 	Move.SteeringThrow = SteeringThrow;
 	Move.Throttle = Throttle;
-	Move.Time = GetWorld()->GetGameState()->GetServerWorldTimeSeconds();
+	Move.Time = GetWorld()->TimeSeconds;
+
 	return Move;
 }
 
@@ -73,6 +76,7 @@ FVector UGoKartMovementComponent::GetRollingResistance()
 	float NormalForce = Mass * AccelerationDueToGravity;
 	return -Velocity.GetSafeNormal() * RollingResistanceCoefficient * NormalForce;
 }
+
 
 void UGoKartMovementComponent::ApplyRotation(float DeltaTime, float SteeringThrow)
 {

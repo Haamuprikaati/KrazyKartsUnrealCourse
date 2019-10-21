@@ -13,7 +13,7 @@ struct FGoKartState
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY()
-	FTransform Transform;
+	FTransform Tranform;
 
 	UPROPERTY()
 	FVector Velocity;
@@ -22,12 +22,12 @@ struct FGoKartState
 	FGoKartMove LastMove;
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class KRAZYKARTS_API UGoKartMovementReplicator : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	UGoKartMovementReplicator();
 
@@ -35,21 +35,20 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-
-	void ClearAcknowledgedMoves(FGoKartMove LastMove);
+	void ClearAcknowledgeMoves(FGoKartMove LastMove);
 
 	void UpdateServerState(const FGoKartMove& Move);
 
-	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
-	FGoKartState ServerState;
-
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_SendMove(FGoKartMove Move);
+
+	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
+	FGoKartState ServerState;
 
 	UFUNCTION()
 	void OnRep_ServerState();
@@ -58,5 +57,4 @@ private:
 
 	UPROPERTY()
 	UGoKartMovementComponent* MovementComponent;
-		
 };

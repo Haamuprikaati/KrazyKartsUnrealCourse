@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GoKartMovementReplicator.h"
 #include "UnrealNetwork.h"
+
 
 // Sets default values for this component's properties
 UGoKartMovementReplicator::UGoKartMovementReplicator()
@@ -12,8 +12,6 @@ UGoKartMovementReplicator::UGoKartMovementReplicator()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	SetIsReplicated(true);
-
-	// ...
 }
 
 
@@ -23,7 +21,7 @@ void UGoKartMovementReplicator::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent = GetOwner()->FindComponentByClass<UGoKartMovementComponent>();
-	
+
 }
 
 
@@ -42,7 +40,7 @@ void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickTy
 		Server_SendMove(LastMove);
 	}
 
-	//We are the server and in control of the pawn
+	// We are the server and in control of the pawn.
 	if (GetOwner()->GetRemoteRole() == ROLE_SimulatedProxy)
 	{
 		UpdateServerState(LastMove);
@@ -52,34 +50,29 @@ void UGoKartMovementReplicator::TickComponent(float DeltaTime, ELevelTick TickTy
 	{
 		MovementComponent->SimulateMove(ServerState.LastMove);
 	}
-
 }
 
 void UGoKartMovementReplicator::UpdateServerState(const FGoKartMove& Move)
 {
 	ServerState.LastMove = Move;
-	ServerState.Transform = GetOwner()->GetActorTransform();
+	ServerState.Tranform = GetOwner()->GetActorTransform();
 	ServerState.Velocity = MovementComponent->GetVelocity();
 }
 
-//This function oes not need header file declaration
 void UGoKartMovementReplicator::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
-
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
 	DOREPLIFETIME(UGoKartMovementReplicator, ServerState);
 }
 
 void UGoKartMovementReplicator::OnRep_ServerState()
 {
-
 	if (MovementComponent == nullptr) return;
 
-	GetOwner()->SetActorTransform(ServerState.Transform);
+	GetOwner()->SetActorTransform(ServerState.Tranform);
 	MovementComponent->SetVelocity(ServerState.Velocity);
 
-	ClearAcknowledgedMoves(ServerState.LastMove);
+	ClearAcknowledgeMoves(ServerState.LastMove);
 
 	for (const FGoKartMove& Move : UnacknowledgedMoves)
 	{
@@ -87,9 +80,10 @@ void UGoKartMovementReplicator::OnRep_ServerState()
 	}
 }
 
-void UGoKartMovementReplicator::ClearAcknowledgedMoves(FGoKartMove LastMove)
+void UGoKartMovementReplicator::ClearAcknowledgeMoves(FGoKartMove LastMove)
 {
 	TArray<FGoKartMove> NewMoves;
+
 	for (const FGoKartMove& Move : UnacknowledgedMoves)
 	{
 		if (Move.Time > LastMove.Time)
@@ -112,7 +106,7 @@ void UGoKartMovementReplicator::Server_SendMove_Implementation(FGoKartMove Move)
 
 bool UGoKartMovementReplicator::Server_SendMove_Validate(FGoKartMove Move)
 {
-	return true; //TODO make better validation
+	return true; //TODO: Make better validation
 }
 
 
