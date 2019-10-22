@@ -49,6 +49,9 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void SetMeshOffsetRoot(USceneComponent* Root) { MeshOffsetRoot = Root; }
+
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -85,4 +88,7 @@ private:
 
 	UPROPERTY()
 		UGoKartMovementComponent* MovementComponent;
+
+	UPROPERTY()
+		USceneComponent* MeshOffsetRoot;
 };
